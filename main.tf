@@ -17,5 +17,4 @@ resource "aws_docdb_subnet_group" "main" {
     var.tags,
     { Name = "${var.env}-subnet-group" }
   )
-  }
 }
