@@ -28,3 +28,21 @@ resource "aws_docdb_subnet_group" "main" {
     { Name = "${var.env}-subnet-group" }
   )
 }
+
+resource "aws_ssm_parameter" "docdb_url_catalogue" {
+  name  = "${var.env}.docdb.catalogue"
+  type  = "String"
+  value = "mongodb://${data.aws_ssm_parameter.user.value}:password${data.aws_ssm_parameter.password.value}@mongodb:27017/catalogue?tls=true&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false"
+}
+
+resource "aws_ssm_parameter" "docdb_url_user" {
+  name  = "${var.env}.docdb.users"
+  type  = "String"
+  value = "mongodb://${data.aws_ssm_parameter.user.value}:password${data.aws_ssm_parameter.password.value}@mongodb:27017/users?tls=true&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false"
+}
+
+resource "aws_ssm_parameter" "docdb_endpoint" {
+  name  = "${var.env}.docdb.endpoint"
+  type  = "String"
+  value = aws_docdb_cluster.main.endpoint
+}
