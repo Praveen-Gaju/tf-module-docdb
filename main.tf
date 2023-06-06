@@ -32,13 +32,13 @@ resource "aws_docdb_subnet_group" "main" {
 resource "aws_ssm_parameter" "docdb_catalogue_url" {
   name  = "${var.env}.docdb.catalogue_url"
   type  = "String"
-  value = "mongodb://${data.aws_ssm_parameter.user.value}:password${data.aws_ssm_parameter.password.value}@mongodb:27017/catalogue?tls=true&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false"
+  value = "mongodb://${data.aws_ssm_parameter.user.value}:${data.aws_ssm_parameter.password.value}@mongodb:27017/catalogue?tls=true&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false"
 }
 
 resource "aws_ssm_parameter" "docdb_url_user" {
   name  = "${var.env}.docdb.user_url"
   type  = "String"
-  value = "mongodb://${data.aws_ssm_parameter.user.value}:password${data.aws_ssm_parameter.password.value}@mongodb:27017/users?tls=true&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false"
+  value = "mongodb://${data.aws_ssm_parameter.user.value}:${data.aws_ssm_parameter.password.value}@mongodb:27017/users?tls=true&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false"
 }
 
 resource "aws_ssm_parameter" "docdb_endpoint" {
