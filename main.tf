@@ -10,13 +10,42 @@ resource "aws_docdb_cluster" "main" {
   db_subnet_group_name    = aws_docdb_subnet_group.main.name
   storage_encrypted       = var.storage_encrypted
   kms_key_id              = data.aws_kms_key.key.arn
+  vpc_security_group_ids  = [aws_security_group.main.id]
 }
+
 
 resource "aws_docdb_cluster_instance" "cluster_instances" {
   count              = var.no_of_instances
   identifier         = "${var.env}-docdb-${count.index}"
   cluster_identifier = aws_docdb_cluster.main.id
   instance_class     = var.instance_class
+}
+
+#security group
+resource "aws_security_group" "main" {
+  name        = "${var.env}-docdb"
+  description = "${var.env}-docdb"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    description      = "APP"
+    from_port        = 27017
+    to_port          = 27017
+    protocol         = "tcp"
+    cidr_blocks      = var.allow_subnets
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+
+  tags       = merge(
+    var.tags,
+    { Name = "${var.env}-docdb" }
+  )
 }
 
 resource "aws_docdb_subnet_group" "main" {
@@ -46,3 +75,4 @@ resource "aws_ssm_parameter" "docdb_endpoint" {
   type  = "String"
   value = aws_docdb_cluster.main.endpoint
 }
+
